@@ -1,3 +1,10 @@
+use crate::gui::GUI;
+
+mod gui;
+
 fn main() {
-    println!("Hello, world!");
+    let mut gui = GUI::default();
+    gui.initialize();
+
+    gui.show();
 }//end main fn
