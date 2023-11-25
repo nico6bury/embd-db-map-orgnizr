@@ -7,4 +7,7 @@ fn main() {
     gui.initialize();
 
     gui.show();
+    while gui.app.wait() {
+        // do whatever
+    }
 }//end main fn
