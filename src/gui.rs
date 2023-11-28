@@ -17,7 +17,20 @@ pub struct GUI {
 	/// part of outer tab group with stuff for adding maps to db
 	pub outer_tab_map_input: Group,
 
-}
+	/// tab group containing tabs for manipulating maps in the database
+	pub organizer_group: Tabs,
+	/// tab for viewing statistics about the maps stored in the database
+	pub organizer_view: Group,
+	/// tab for filtering maps in the database to find specific maps
+	pub organizer_filter: Group,
+
+	/// tab group containing tabs for adding maps to database
+	pub map_input_group: Tabs,
+	/// tab for assembling files of maps to add to database
+	pub map_input_files: Group,
+	/// tab for looking through assembled maps and assigning metadata
+	pub map_input_tagger: Group,
+}//end struct GUI
 
 impl Default for GUI {
     fn default() -> Self {
@@ -27,6 +40,12 @@ impl Default for GUI {
 			outer_tab_group: Default::default(),
 			outer_tab_organizer: Default::default(),
 			outer_tab_map_input: Default::default(),
+            map_input_group: Default::default(),
+            map_input_files: Default::default(),
+            map_input_tagger: Default::default(),
+            organizer_group: Default::default(),
+            organizer_view: Default::default(),
+            organizer_filter: Default::default(),
 		}//end Self constructor
     }//end default()
 }//end impl Default for GUI
@@ -55,6 +74,38 @@ impl GUI {
 		self.outer_tab_map_input = Group::new(0, self.outer_tab_group.y() + get_default_tab_padding(), self.outer_tab_group.width(), self.outer_tab_group.height(), "Map Import");
 		self.outer_tab_map_input.end();
 		self.outer_tab_group.add(&self.outer_tab_map_input);
+
+		// db organizer tab group settings
+		self.organizer_group = Tabs::new(0, self.outer_tab_organizer.y(), get_default_win_width(), get_default_win_height() - get_default_tab_padding(), None);
+		self.organizer_group.auto_layout();
+		self.organizer_group.end();
+		self.outer_tab_organizer.add(&self.organizer_group);
+
+		// db organizer view settings
+		self.organizer_view = Group::new(0, self.organizer_group.y() + get_default_tab_padding(), self.organizer_group.width(), self.organizer_group.height(), "View");
+		self.organizer_view.end();
+		self.organizer_group.add(&self.organizer_view);
+
+		// db organizer filter settings
+		self.organizer_filter = Group::new(0, self.organizer_group.y() + get_default_tab_padding(), self.organizer_group.width(), self.organizer_group.height(), "Filter");
+		self.organizer_filter.end();
+		self.organizer_group.add(&self.organizer_filter);
+
+		// db import tab group settings
+		self.map_input_group = Tabs::new(0, self.outer_tab_map_input.y(), get_default_win_width(), get_default_win_height() - get_default_tab_padding(), None);
+		self.map_input_group.auto_layout();
+		self.map_input_group.end();
+		self.outer_tab_map_input.add(&self.map_input_group);
+
+		// db import files settings
+		self.map_input_files = Group::new(0, self.map_input_group.y() + get_default_tab_padding(), self.map_input_group.width(), self.map_input_group.height(), "Files");
+		self.map_input_files.end();
+		self.map_input_group.add(&self.map_input_files);
+
+		// db import tagger settings
+		self.map_input_tagger = Group::new(0, self.map_input_group.y() + get_default_tab_padding(), self.map_input_group.width(), self.map_input_group.height(), "Tagger");
+		self.map_input_tagger.end();
+		self.map_input_group.add(&self.map_input_tagger);
 	}//end initialize(&mut self)
 
 	pub fn show(&mut self) {
