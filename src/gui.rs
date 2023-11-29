@@ -1,4 +1,4 @@
-use fltk::{app::App, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase, DisplayExt}, enums::Color, group::{Tabs, Group}, text::{TextBuffer, TextDisplay}};
+use fltk::{app::{App, Receiver, Sender, self}, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase, DisplayExt}, enums::Color, group::{Tabs, Group}, text::{TextBuffer, TextDisplay}, button::Button, dialog::{FileDialog, FileDialogType}};
 use fltk_theme::{WidgetScheme, SchemeType};
 
 
@@ -32,6 +32,11 @@ pub struct GUI {
 	/// tab for looking through assembled maps and assigning metadata
 	map_input_tagger: Group,
 
+	/// sends messages for gui events
+	msg_sender: Sender<String>,
+	/// receives messages for gui events
+	pub msg_receiver: Receiver<String>,
+
 	/// This text buffer holds the displayed text for 
 	/// listing the maps currently loaded into the database
 	pub map_list_buffer: TextBuffer,
@@ -39,7 +44,8 @@ pub struct GUI {
 
 impl Default for GUI {
     fn default() -> Self {
-        Self {
+        let (s, r) = app::channel();
+		Self {
 			app: Default::default(), 
 			main_window: Default::default(),
 			outer_tab_group: Default::default(),
@@ -51,6 +57,8 @@ impl Default for GUI {
             organizer_group: Default::default(),
             organizer_view: Default::default(),
             organizer_filter: Default::default(),
+			msg_sender: s,
+			msg_receiver: r,
             map_list_buffer: Default::default(),
 		}//end Self constructor
     }//end default()
@@ -74,6 +82,8 @@ impl GUI {
 		self.initialize_tabs();
 		// set up tab for viewing maps in database
 		self.initialize_map_view();
+		// set up tab for adding map files to the queue to add to the database
+		self.initialize_map_file_import();
 	}//end initialize(&mut self)
 
 	/// # initialize_tabs(self)
@@ -150,6 +160,63 @@ impl GUI {
 		}//end looping over each map
 		self.map_list_buffer.set_text(&new_disp);
 	}//end update_map_view_list()
+
+	fn initialize_map_file_import(&mut self) {
+		/*
+		So, basically, for this tab, I'll want the following:
+		- a list of the files currently in the queue
+		- button to start file selection dialog
+		- maybe button to remove selected lines?
+		 */
+		// references for changing multiple controls at onces
+		let btn_width = 150;
+		let btn_height = 30;
+		let btn_start_x = 50;
+		let btn_start_y = 80;
+		let btn_padding = 15;
+		let btn_color = Color::Light2;
+
+
+		let mut select_file_btn = Button::default()
+			.with_size(btn_width, btn_height)
+			.with_pos(btn_start_x, btn_start_y)
+			.with_label("Select Map File");
+		select_file_btn.set_color(btn_color);
+		select_file_btn.emit(self.msg_sender.clone(), "select-new-map-file".to_string());
+		self.map_input_files.add(&select_file_btn);
+
+		let mut select_folder_btn = Button::default()
+			.with_size(btn_width, btn_height)
+			.below_of(&select_file_btn, btn_padding)
+			.with_label("Select Map Folder");
+		select_folder_btn.set_color(btn_color);
+		select_folder_btn.emit(self.msg_sender.clone(),  "select-new-map-folder".to_string());
+		self.map_input_files.add(&select_folder_btn);
+	}//end initialize_map_file_import(self)
+
+	pub fn dialog_get_file() -> Option<String> {
+		let mut file_dialog = FileDialog::new(FileDialogType::BrowseFile);
+		file_dialog.show();
+		match file_dialog.filename().to_str() {
+			Some(val) => {
+				if val.eq("") {None}
+				else {Some(val.to_string())}
+			},
+			None => None,
+		}//end converting optional &str to optional String
+	}//end dialog_get_file()
+
+	pub fn dialog_get_folder() -> Option<String> {
+		let mut folder_dialog = FileDialog::new(FileDialogType::BrowseDir);
+		folder_dialog.show();
+		match folder_dialog.filename().to_str() {
+			Some(val) => {
+				if val.eq("") {None}
+				else {Some(val.to_string())}
+			},
+			None => None,
+		}//end converting optional &str to optional String
+	}//end dialog_get_folder()
 
 	/// # show(self)
 	/// 
