@@ -1,4 +1,4 @@
-use fltk::{app::App, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase}, enums::Color, group::{Tabs, Group}};
+use fltk::{app::App, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase, DisplayExt}, enums::Color, group::{Tabs, Group}, text::{TextBuffer, TextDisplay}};
 use fltk_theme::{WidgetScheme, SchemeType};
 
 
@@ -31,6 +31,10 @@ pub struct GUI {
 	map_input_files: Group,
 	/// tab for looking through assembled maps and assigning metadata
 	map_input_tagger: Group,
+
+	/// This text buffer holds the displayed text for 
+	/// listing the maps currently loaded into the database
+	pub map_list_buffer: TextBuffer,
 }//end struct GUI
 
 impl Default for GUI {
@@ -47,6 +51,7 @@ impl Default for GUI {
             organizer_group: Default::default(),
             organizer_view: Default::default(),
             organizer_filter: Default::default(),
+            map_list_buffer: Default::default(),
 		}//end Self constructor
     }//end default()
 }//end impl Default for GUI
@@ -127,8 +132,24 @@ impl GUI {
 	}
 
 	fn initialize_map_view(&mut self) {
-
+		// set up the scrollable text display for list of maps
+		let mut map_list_disp = TextDisplay::default()
+			.with_size(270,300)
+			.with_pos(50, 100)
+			.with_label("Maps loaded in Database");
+		self.organizer_view.add(&map_list_disp);
+		map_list_disp.set_buffer(self.map_list_buffer.clone());
 	}//end initialize_map_view(self)
+
+	#[allow(dead_code)]
+	pub fn update_map_view_list(&mut self, maps: &Vec<String>) {
+		let mut new_disp = "".to_string();
+		for map in maps {
+			new_disp += map;
+			new_disp += "\n"
+		}//end looping over each map
+		self.map_list_buffer.set_text(&new_disp);
+	}//end update_map_view_list()
 
 	/// # show(self)
 	/// 
