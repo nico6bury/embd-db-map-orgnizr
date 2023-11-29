@@ -67,6 +67,8 @@ impl GUI {
 
 		// set up organization of the tabs organization
 		self.initialize_tabs();
+		// set up tab for viewing maps in database
+		self.initialize_map_view();
 	}//end initialize(&mut self)
 
 	/// # initialize_tabs(self)
@@ -124,6 +126,10 @@ impl GUI {
 		self.map_input_group.add(&self.map_input_tagger);
 	}
 
+	fn initialize_map_view(&mut self) {
+
+	}//end initialize_map_view(self)
+
 	/// # show(self)
 	/// 
 	/// This function makes the GUI visible.
@@ -134,6 +140,7 @@ impl GUI {
 		widget_scheme.apply();
 		// actually make stuff show up
 		self.main_window.show();
+		self.main_window.resize(self.main_window.x(), self.main_window.y(), self.main_window.width() + 1, self.main_window.height());
 	}//end show(&mut self)
 }//end impl for GUI
 
