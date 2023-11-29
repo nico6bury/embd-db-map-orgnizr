@@ -12,25 +12,25 @@ pub struct GUI {
 	pub main_window: Window,
 	
 	/// Outer vertical tab group
-	pub outer_tab_group: Tabs,
+	outer_tab_group: Tabs,
 	/// part of outer tab group with stuff for searching for maps
-	pub outer_tab_organizer: Group,
+	outer_tab_organizer: Group,
 	/// part of outer tab group with stuff for adding maps to db
-	pub outer_tab_map_input: Group,
+	outer_tab_map_input: Group,
 
 	/// tab group containing tabs for manipulating maps in the database
-	pub organizer_group: Tabs,
+	organizer_group: Tabs,
 	/// tab for viewing statistics about the maps stored in the database
-	pub organizer_view: Group,
+	organizer_view: Group,
 	/// tab for filtering maps in the database to find specific maps
-	pub organizer_filter: Group,
+	organizer_filter: Group,
 
 	/// tab group containing tabs for adding maps to database
-	pub map_input_group: Tabs,
+	map_input_group: Tabs,
 	/// tab for assembling files of maps to add to database
-	pub map_input_files: Group,
+	map_input_files: Group,
 	/// tab for looking through assembled maps and assigning metadata
-	pub map_input_tagger: Group,
+	map_input_tagger: Group,
 }//end struct GUI
 
 impl Default for GUI {
