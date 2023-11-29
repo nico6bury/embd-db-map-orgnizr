@@ -10,6 +10,7 @@ pub struct GUI {
 	pub app:App,
 	/// main window of application
 	pub main_window: Window,
+	
 	/// Outer vertical tab group
 	pub outer_tab_group: Tabs,
 	/// part of outer tab group with stuff for searching for maps
@@ -51,6 +52,11 @@ impl Default for GUI {
 }//end impl Default for GUI
 
 impl GUI {
+	/// # initialize(self)
+	/// 
+	/// This function sets up the default properties all all
+	/// the GUI elements. Call this and show() to set up 
+	/// the GUI and make it visible.
 	pub fn initialize(&mut self) {
 		// window settings
 		self.main_window.set_size(get_default_win_width(),get_default_win_height());
@@ -59,6 +65,16 @@ impl GUI {
 		self.main_window.set_label_size(32);
 		self.main_window.set_label_color(Color::Green);
 
+		// set up organization of the tabs organization
+		self.initialize_tabs();
+	}//end initialize(&mut self)
+
+	/// # initialize_tabs(self)
+	/// 
+	/// This function is a little helper method that sets up
+	/// default properties for the tabs and groups that contain
+	/// all the other parts of the GUI.
+	fn initialize_tabs(&mut self) {
 		// outer tab settings
 		self.outer_tab_group = Tabs::new(0, 0, get_default_win_width(), get_default_win_height(), None);
 		self.outer_tab_group.auto_layout();
@@ -106,8 +122,12 @@ impl GUI {
 		self.map_input_tagger = Group::new(0, self.map_input_group.y() + get_default_tab_padding(), self.map_input_group.width(), self.map_input_group.height(), "Tagger");
 		self.map_input_tagger.end();
 		self.map_input_group.add(&self.map_input_tagger);
-	}//end initialize(&mut self)
+	}
 
+	/// # show(self)
+	/// 
+	/// This function makes the GUI visible.
+	/// Note that the initialize() function should be called first.
 	pub fn show(&mut self) {
 		// set theme because why not do it here?
 		let widget_scheme = WidgetScheme::new(SchemeType::Fluent);
