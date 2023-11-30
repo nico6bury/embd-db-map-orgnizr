@@ -40,6 +40,10 @@ pub struct GUI {
 	/// This text buffer holds the displayed text for 
 	/// listing the maps currently loaded into the database
 	pub map_list_buffer: TextBuffer,
+
+	/// This text buffer holds the displayed text for listing the maps 
+	/// currently queued to be loaded into the database
+	pub queue_list_buffer: TextBuffer,
 }//end struct GUI
 
 impl Default for GUI {
@@ -60,6 +64,7 @@ impl Default for GUI {
 			msg_sender: s,
 			msg_receiver: r,
             map_list_buffer: Default::default(),
+			queue_list_buffer: Default::default(),
 		}//end Self constructor
     }//end default()
 }//end impl Default for GUI
@@ -192,6 +197,13 @@ impl GUI {
 		select_folder_btn.set_color(btn_color);
 		select_folder_btn.emit(self.msg_sender.clone(),  "select-new-map-folder".to_string());
 		self.map_input_files.add(&select_folder_btn);
+
+		let mut files_queue_disp = TextDisplay::default()
+			.with_size(300, 500)
+			.below_of(&select_folder_btn, 30)
+			.with_label("Queue");
+		files_queue_disp.set_buffer(self.queue_list_buffer.clone());
+		self.map_input_files.add(&files_queue_disp);
 	}//end initialize_map_file_import(self)
 
 	pub fn dialog_get_file() -> Option<String> {
