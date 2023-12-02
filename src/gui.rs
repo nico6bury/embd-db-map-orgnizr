@@ -1,4 +1,4 @@
-use fltk::{app::{App, Receiver, Sender, self}, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase, DisplayExt}, enums::Color, group::{Tabs, Group}, text::{TextBuffer, TextDisplay}, button::Button, dialog::{FileDialog, FileDialogType}};
+use fltk::{app::{App, Receiver, Sender, self}, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase, DisplayExt}, enums::Color, group::{Tabs, Group}, text::{TextBuffer, TextDisplay}, button::Button, dialog::{FileDialog, FileDialogType, self}};
 use fltk_theme::{WidgetScheme, SchemeType};
 
 
@@ -156,16 +156,6 @@ impl GUI {
 		map_list_disp.set_buffer(self.map_list_buffer.clone());
 	}//end initialize_map_view(self)
 
-	#[allow(dead_code)]
-	pub fn update_map_view_list(&mut self, maps: &Vec<String>) {
-		let mut new_disp = "".to_string();
-		for map in maps {
-			new_disp += map;
-			new_disp += "\n"
-		}//end looping over each map
-		self.map_list_buffer.set_text(&new_disp);
-	}//end update_map_view_list()
-
 	fn initialize_map_file_import(&mut self) {
 		/*
 		So, basically, for this tab, I'll want the following:
@@ -199,12 +189,38 @@ impl GUI {
 		self.map_input_files.add(&select_folder_btn);
 
 		let mut files_queue_disp = TextDisplay::default()
-			.with_size(300, 500)
+			.with_size(400, 500)
 			.below_of(&select_folder_btn, 30)
 			.with_label("Queue");
 		files_queue_disp.set_buffer(self.queue_list_buffer.clone());
+		files_queue_disp.wrap_mode(fltk::text::WrapMode::AtBounds, 5);
 		self.map_input_files.add(&files_queue_disp);
 	}//end initialize_map_file_import(self)
+
+
+	/// # update_map_view_list
+	/// 
+	/// This function updates the list of maps currently loaded into the db.
+	pub fn update_map_view_list(&mut self, maps: &Vec<String>) {
+		let mut new_disp = "".to_string();
+		for map in maps {
+			new_disp += map;
+			new_disp += "\n"
+		}//end looping over each map
+		self.map_list_buffer.set_text(&new_disp);
+	}//end update_map_view_list()
+
+	/// # update_map_queue
+	/// 
+	/// This function updates the list of maps queued up to be added to the db.
+	pub fn update_map_queue(&mut self, queue: &Vec<String>) {
+		let mut new_disp = "".to_string();
+		for map in queue {
+			new_disp += map;
+			new_disp += "\n";
+		}//end looping over each map
+		self.queue_list_buffer.set_text(&new_disp);
+	}//end update_map_quque
 
 	pub fn dialog_get_file() -> Option<String> {
 		let mut file_dialog = FileDialog::new(FileDialogType::BrowseFile);
@@ -242,6 +258,13 @@ impl GUI {
 		self.main_window.show();
 		self.main_window.resize(self.main_window.x(), self.main_window.y(), self.main_window.width() + 1, self.main_window.height());
 	}//end show(&mut self)
+
+	/// # show_message(message)
+	/// 
+	/// This function shows a simple message box pop-up with a provided message. 
+	pub fn show_message(message: &str) {
+		dialog::message_default(message);
+	}//end show_message(message)
 }//end impl for GUI
 
 pub fn get_default_win_width() -> i32 {1000}
