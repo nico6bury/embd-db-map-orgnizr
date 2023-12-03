@@ -1,4 +1,4 @@
-use fltk::{app::{App, Receiver, Sender, self}, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase, DisplayExt}, enums::Color, group::{Tabs, Group}, text::{TextBuffer, TextDisplay}, button::Button, dialog::{FileDialog, FileDialogType, self}};
+use fltk::{app::{App, Receiver, Sender, self}, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase, DisplayExt}, enums::Color, group::{Tabs, Group, Tile}, text::{TextBuffer, TextDisplay}, button::Button, dialog::{FileDialog, FileDialogType, self}};
 use fltk_theme::{WidgetScheme, SchemeType};
 
 
@@ -44,6 +44,9 @@ pub struct GUI {
 	/// This text buffer holds the displayed text for listing the maps 
 	/// currently queued to be loaded into the database
 	pub queue_list_buffer: TextBuffer,
+
+	/// This frame holds the image of the map in the queue that is currently selected
+	map_queue_img: Button,
 }//end struct GUI
 
 impl Default for GUI {
@@ -65,6 +68,7 @@ impl Default for GUI {
 			msg_receiver: r,
             map_list_buffer: Default::default(),
 			queue_list_buffer: Default::default(),
+			map_queue_img: Default::default(),
 		}//end Self constructor
     }//end default()
 }//end impl Default for GUI
@@ -188,13 +192,26 @@ impl GUI {
 		select_folder_btn.emit(self.msg_sender.clone(),  "select-new-map-folder".to_string());
 		self.map_input_files.add(&select_folder_btn);
 
+		let mut map_queue_view_tile = Tile::default()
+			.with_size(900,500)
+			.below_of(&select_folder_btn, 30);
+		map_queue_view_tile.end();
+		self.map_input_files.add(&map_queue_view_tile);
+
 		let mut files_queue_disp = TextDisplay::default()
-			.with_size(400, 500)
-			.below_of(&select_folder_btn, 30)
+			.with_size(map_queue_view_tile.width() / 2, map_queue_view_tile.height())
+			.with_pos(map_queue_view_tile.x(), map_queue_view_tile.y())
 			.with_label("Queue");
+		files_queue_disp.set_color(Color::Light2);
 		files_queue_disp.set_buffer(self.queue_list_buffer.clone());
 		files_queue_disp.wrap_mode(fltk::text::WrapMode::AtBounds, 5);
-		self.map_input_files.add(&files_queue_disp);
+		map_queue_view_tile.add(&files_queue_disp);
+
+		self.map_queue_img = Button::default()
+			.with_size(map_queue_view_tile.width() / 2, map_queue_view_tile.height())
+			.right_of(&files_queue_disp, 0);
+		self.map_queue_img.set_color(Color::Light3);
+		map_queue_view_tile.add(&self.map_queue_img);
 	}//end initialize_map_file_import(self)
 
 
