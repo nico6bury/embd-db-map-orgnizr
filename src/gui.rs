@@ -1,6 +1,7 @@
 use fltk::{app::{App, Receiver, Sender, self}, window::Window, prelude::{WidgetExt, GroupExt, WidgetBase, DisplayExt}, enums::Color, group::{Tabs, Group, Tile}, text::{TextBuffer, TextDisplay}, button::Button, dialog::{FileDialog, FileDialogType, self}};
 use fltk_theme::{WidgetScheme, SchemeType};
 
+mod button_list;
 
 /// # GUI
 /// This struct holds all the gui structs pulled from fltk.  
